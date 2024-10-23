@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>TODO List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  <!--style-->
+  <style>
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5),
+                  0 6px 20px 0 rgba(0, 0, 0, 0.39);
+      background: #85a7a5; 
+      margin-bottom: 5%;
+      border-radius: 25px;
+      padding: 2%;
+      overflow: auto;
+      resize: both;
+      text-overflow: ellipsis;
+      transition: background 0.3s ease;
+    }
+  
+    .card:hover {
+      background: #87ceeb; /* Sky Blue */
+    }
+  
+    .submit_form {
+      text-align: center;
+      padding: 3%;
+      background: #ffa07a; /* Light Salmon */
+      border-radius: 25px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4),
+                  0 6px 20px 0 rgba(0, 0, 0, 0.36);
+      margin-top: 20px; /* Adds spacing above the form */
+    }
+  
+    /* Additional styling for submit buttons */
+    .submit_form button {
+      background-color: #ff4500; /* Orange Red */
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+  
+    .submit_form button:hover {
+      background-color: #dc143c; /* Crimson color on hover */
+    }
+    .remove_button:hover {
+      background: #dc3545; /* Bootstrap Danger Red */
+    }
+    /* Task done styling */
+    .task-done {
+      text-decoration: line-through;
+      color: #8b8989; /* Gray color for completed tasks */
+      font-style: italic; /* Italic style for emphasis */
+    }
+    .todo-heading {
+    font-family: 'Poppins', sans-serif; /* Clean, modern font */
+    font-size: 48px; /* Large and bold font size */
+    color: #fff; /* White text for contrast */
+    text-align: center; /* Center the heading */
+    padding: 20px 40px; /* Add padding for spacing */
+    background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Attractive gradient background */
+    border-radius: 12px; /* Rounded corners for a softer look */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Deeper shadow for a more pronounced 3D effect */
+    text-transform: uppercase; /* Uppercase text for emphasis */
+    letter-spacing: 2px; /* Increase letter spacing for a modern feel */
+    margin-bottom: 30px; /* Add space below the heading */
+    transition: all 0.3s ease; /* Smooth hover transition */
+}
+
+.todo-heading:hover {
+    background: linear-gradient(90deg, #feb47b, #ff7e5f); /* Reverse gradient on hover */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); /* Increase shadow for hover effect */
+    transform: translateY(-3px); /* Slight lift on hover */
+}
+  </style>  
+
+</head>
+
+<body class="container-fluid">
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-info">
+    <strong>{{message}}</strong>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <center class="row">
+    <h1><i><h1 class="todo-heading">TODO LIST</h1></i></h1>
+    <hr />
+  </center>
+
+  <div class="row">
+    <div class="col-md-8">
+
+      {% for i in list %}
+      <div class="card">
+        <center>
+          <b class="{% if i.is_done %}task-done{% endif %}">{{i.title}}</b>
+        </center>
+        <hr />
+        {{i.date}}
+        <hr />
+        {{i.details}}
+        <br />
+        <br />
+        <!-- Mark as done form -->
+        <form action="/mark_done/{{i.id}}" method="POST" style="float: left; padding-left: 4%;">
+          {% csrf_token %}
+          {% if not i.is_done %}
+          <button value="done" type="submit" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span> &nbsp; Mark Done
+          </button>
+          {% else %}
+          <span class="text-success"><span class="glyphicon glyphicon-ok"></span> &nbsp; Done</span>
+          {% endif %}
+        </form>
+
+        <!-- Remove form -->
+        <form action="/del/{{i.id}}" method="POST" style="padding-right: 4%; padding-bottom: 3%; float: right;">
+          {% csrf_token %}
+          <button value="remove" type="submit" class="btn btn-primary">
+            <span class=""></span> &nbsp; Remove
+          </button>
+        </form>
+
+        <div style="clear: both;"></div> <!-- Clears floats -->
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <div class="submit_form">
+        <form method="POST">
+          {% csrf_token %}
+          {{forms}}
+          <center>
+            <input type="submit" class="btn btn-default" value="submit" />
+          </center>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
